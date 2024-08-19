@@ -1,3 +1,4 @@
+
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets, permissions
 from rest_framework.decorators import action
@@ -63,6 +64,11 @@ class CourseViewSet(viewsets.ModelViewSet):
         if self.action in ['list', 'retrieve']:
             return CourseSerializer
         return CreateCourseSerializer
+
+    def list(self, request, *args, **kwargs):
+        courses = self.queryset.filter(is_available=True).exclude(subscription__user=request.user.id)
+        serializer = self.get_serializer_class()(courses, many=True)
+        return Response(serializer.data)
 
     @action(
         methods=['post'],

@@ -22,6 +22,11 @@ class Course(models.Model):
         verbose_name='Стоимость'
     )
 
+    is_available = models.BooleanField(
+        default=False,
+        verbose_name='Доступность курса'
+    )
+
     class Meta:
         verbose_name = 'Курс'
         verbose_name_plural = 'Курсы'
