@@ -14,7 +14,9 @@ class UserViewSet(viewsets.ModelViewSet):
     http_method_names = ["get", "head", "options"]
     permission_classes = (permissions.IsAdminUser,)
 
-
+    def list(self, request, *args, **kwargs):
+        serializer = CustomUserSerializer(self.queryset, many=True)
+        return Response(serializer.data)
 
 
 class BalanceViewSet(viewsets.ModelViewSet):
