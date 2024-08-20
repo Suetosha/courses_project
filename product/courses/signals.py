@@ -38,6 +38,3 @@ def post_save_course(sender, instance: Course, created, **kwargs):
     if created:
         Group.objects.bulk_create([Group(title=f'{num} group',
                                          course=instance) for num in range(1, 11)])
-
-
-

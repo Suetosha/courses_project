@@ -92,7 +92,8 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_students_count(self, obj):
         """Общее количество студентов на курсе."""
-        # TODO Доп. задание
+        users = Subscription.objects.filter(course=obj).values('user_id').count()
+        return users
 
     def get_groups_filled_percent(self, obj):
         """Процент заполнения групп, если в группе максимум 30 чел.."""
@@ -100,7 +101,11 @@ class CourseSerializer(serializers.ModelSerializer):
 
     def get_demand_course_percent(self, obj):
         """Процент приобретения курса."""
-        # TODO Доп. задание
+        all_users = User.objects.filter(is_staff=False).count()
+        users_on_course = Subscription.objects.filter(course=obj).values('user_id').count()
+        percent = users_on_course / all_users * 100
+        return percent
+
 
     class Meta:
         model = Course
