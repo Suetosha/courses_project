@@ -15,6 +15,8 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAdminUser,)
 
 
+
+
 class BalanceViewSet(viewsets.ModelViewSet):
     queryset = Balance.objects.all()
     serializer_class = BalanceSerializer

@@ -13,7 +13,7 @@ from api.v1.serializers.course_serializer import (CourseSerializer,
                                                   LessonSerializer)
 from api.v1.serializers.user_serializer import SubscriptionSerializer
 from courses.models import Course
-from users.models import Subscription
+from users.models import Subscription, Balance
 
 
 class LessonViewSet(viewsets.ModelViewSet):
@@ -78,9 +78,28 @@ class CourseViewSet(viewsets.ModelViewSet):
     def pay(self, request, pk):
         """Покупка доступа к курсу (подписка на курс)."""
 
-        # TODO
+        user_balance = Balance.objects.get(user=request.user.id)
+        course = Course.objects.get(pk=pk)
+
+        is_user_subscribed = Subscription.objects.filter(user=request.user.id, course=pk)
+
+        if is_user_subscribed:
+            return Response({'error': 'User already subscribed'}, status=status.HTTP_400_BAD_REQUEST)
+
+        total_user_bonuses = user_balance.bonus - course.price
+
+        if total_user_bonuses < 0:
+            return Response({'error': 'Not enough bonuses'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_balance.bonus = total_user_bonuses
+        user_balance.save()
+
+        subscription = Subscription(user=request.user, course=course)
+        subscription.save()
+
+        serializer = SubscriptionSerializer(subscription)
 
         return Response(
-            data=data,
+            data=serializer.data,
             status=status.HTTP_201_CREATED
         )

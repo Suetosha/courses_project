@@ -24,10 +24,10 @@ class BalanceSerializer(serializers.ModelSerializer):
 class SubscriptionSerializer(serializers.ModelSerializer):
     """Сериализатор подписки."""
 
-    # TODO
-
     class Meta:
         model = Subscription
         fields = (
-            # TODO
+            'user',
+            'course',
+            'group'
         )

@@ -63,7 +63,9 @@ class Subscription(models.Model):
 
     group = models.ForeignKey(
         Group,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
     )
 
     class Meta:
