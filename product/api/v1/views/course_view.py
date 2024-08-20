@@ -11,7 +11,7 @@ from api.v1.serializers.course_serializer import (CourseSerializer,
                                                   GroupSerializer,
                                                   LessonSerializer)
 from api.v1.serializers.user_serializer import SubscriptionSerializer
-from courses.models import Course
+from courses.models import Course, Group
 from users.models import Subscription, Balance
 
 
@@ -44,6 +44,13 @@ class GroupViewSet(viewsets.ModelViewSet):
             return GroupSerializer
         return CreateGroupSerializer
 
+    def list(self, request, *args, **kwargs):
+        course_id = kwargs['course_id']
+        groups = Group.objects.filter(course_id=course_id)
+        serializer = self.get_serializer_class()(groups, many=True)
+        return Response(serializer.data)
+
+
     def perform_create(self, serializer):
         course = get_object_or_404(Course, id=self.kwargs.get('course_id'))
         serializer.save(course=course)
@@ -65,7 +72,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         return CreateCourseSerializer
 
     def list(self, request, *args, **kwargs):
-        courses = self.queryset.filter(is_available=True).exclude(subscription__user=request.user.id)
+        courses = self.queryset.filter()
         serializer = self.get_serializer_class()(courses, many=True)
         return Response(serializer.data)
 

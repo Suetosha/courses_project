@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Avg, Count
 from rest_framework import serializers
-
+from django.db.models import F
 from courses.models import Course, Group, Lesson
 from users.models import Subscription
 
@@ -48,11 +47,34 @@ class StudentSerializer(serializers.ModelSerializer):
 
 class GroupSerializer(serializers.ModelSerializer):
     """Список групп."""
+    course = serializers.SerializerMethodField('get_course_title')
 
-    # TODO Доп. задание
+    students = serializers.SerializerMethodField('get_students')
 
     class Meta:
         model = Group
+        fields = (
+            'title',
+            'course',
+            'students'
+        )
+
+    def get_course_title(self, obj):
+        return obj.course.title
+
+    def get_students(self, obj):
+        students = (Subscription.objects.filter(
+            group=obj
+        ).annotate(
+            first_name=F('user__first_name'),
+            last_name=F('user__last_name'),
+            email=F('user__email')
+        ).values(
+            'first_name',
+            'last_name',
+            'email'
+        ))
+        return students
 
 
 class CreateGroupSerializer(serializers.ModelSerializer):
@@ -105,7 +127,6 @@ class CourseSerializer(serializers.ModelSerializer):
         users_on_course = Subscription.objects.filter(course=obj).values('user_id').count()
         percent = users_on_course / all_users * 100
         return percent
-
 
     class Meta:
         model = Course
