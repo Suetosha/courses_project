@@ -42,6 +42,8 @@ class Balance(models.Model):
         on_delete=models.CASCADE
     )
 
+    objects = models.Manager()
+
     class Meta:
         verbose_name = 'Баланс'
         verbose_name_plural = 'Балансы'
@@ -67,6 +69,8 @@ class Subscription(models.Model):
         null=True,
         blank=True
     )
+
+    objects = models.Manager()
 
     class Meta:
         verbose_name = 'Подписка'

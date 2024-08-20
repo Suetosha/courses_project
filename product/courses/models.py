@@ -27,6 +27,8 @@ class Course(models.Model):
         verbose_name='Доступность курса'
     )
 
+    objects = models.Manager()
+
     class Meta:
         verbose_name = 'Курс'
         verbose_name_plural = 'Курсы'
@@ -61,9 +63,12 @@ class Lesson(models.Model):
     def __str__(self):
         return self.title
 
+    objects = models.Manager()
+
 
 class Group(models.Model):
     """Модель группы."""
+
 
     title = models.CharField(
         max_length=250,
@@ -75,7 +80,11 @@ class Group(models.Model):
         on_delete=models.CASCADE
     )
 
+    objects = models.Manager()
+
     class Meta:
         verbose_name = 'Группа'
         verbose_name_plural = 'Группы'
         ordering = ('-id',)
+
+
