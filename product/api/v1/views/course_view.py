@@ -12,7 +12,7 @@ from api.v1.serializers.course_serializer import (CourseSerializer,
                                                   GroupSerializer,
                                                   LessonSerializer)
 from api.v1.serializers.user_serializer import SubscriptionSerializer
-from courses.models import Course
+from courses.models import Course, Group
 from users.models import Subscription, Balance
 
 
@@ -69,6 +69,9 @@ class CourseViewSet(viewsets.ModelViewSet):
         courses = self.queryset.filter(is_available=True).exclude(subscription__user=request.user.id)
         serializer = self.get_serializer_class()(courses, many=True)
         return Response(serializer.data)
+
+    def perform_create(self, serializer):
+        serializer.save(**self.kwargs)
 
     @action(
         methods=['post'],
